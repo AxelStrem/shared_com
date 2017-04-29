@@ -10,8 +10,8 @@
 template<class I> class remove_iunknown : public I
 {
 public:
-	void AddRef() = delete;
-	void Release() = delete;
+	void AddRef(int) = delete;
+	void Release(int) = delete;
 	void QueryInterface() = delete;
 };
 
@@ -51,8 +51,16 @@ public:
 			ptr->Release();
 	}
 
+	template<class T>
+	shared_com(shared_com<T>& source, typename std::enable_if<std::is_convertible<T*, I*>::value, int>::type tag = 0) : mPtr(source.get())
+	{
+		mPtr->AddRef();
+	}
+
 	template<class T> 
-	shared_com(shared_com<T>& source)
+	shared_com(shared_com<T>& source, typename std::enable_if<std::conjunction<std::is_convertible<T*, IUnknown*>,
+		                                                                       std::negation<std::is_convertible<T*, I*>>>::value,
+		                                                      int>::type tag = 0)
 	{
 		if (source.get()->QueryInterface(GetIID<I>(), (void**)(&mPtr)) != S_OK)
 			mPtr = nullptr;
