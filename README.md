@@ -14,4 +14,4 @@ It manages both COM reference counting and `QueryInterface` calls:
 
       shared_com<Interface3> f;    // nullptr-initialized
       Interface3Factory(args, &f); // out parameter
-    }
+    }  // all COM objects are released
