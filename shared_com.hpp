@@ -5,7 +5,6 @@
 #pragma once
 #include <type_traits>
 #include <Unknwn.h>
-#include "iid_list.h"
 
 template<class I> class remove_iunknown : public I
 {
@@ -45,7 +44,7 @@ public:
 		                                                        std::negation<std::is_convertible<T*,I*>>>::value,
 		                                       int>::type tag = 0)
 	{
-		if (ptr->QueryInterface(GetIID<I>(), (void**)(&mPtr)) != S_OK)
+		if (ptr->QueryInterface(__uuidof(I), (void**)(&mPtr)) != S_OK)
 			mPtr = nullptr;
 		else
 			ptr->Release();
@@ -62,7 +61,7 @@ public:
 		                                                                       std::negation<std::is_convertible<T*, I*>>>::value,
 		                                                      int>::type tag = 0)
 	{
-		if (source.get()->QueryInterface(GetIID<I>(), (void**)(&mPtr)) != S_OK)
+		if (source.get()->QueryInterface(__uuidof(I), (void**)(&mPtr)) != S_OK)
 			mPtr = nullptr;
 	}
 
