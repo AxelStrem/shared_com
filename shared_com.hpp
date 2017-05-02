@@ -6,6 +6,13 @@
 #include <type_traits>
 #include <Unknwn.h>
 
+template <class T> inline IID GetIID()
+{
+	return __uuidof(T);
+}
+
+#define SETUP_IID(interface_name) template<> inline IID GetIID< interface_name >() { return IID_##interface_name; }
+
 template<class I> class remove_iunknown : public I
 {
 public:
@@ -44,7 +51,7 @@ public:
 		                                                        std::negation<std::is_convertible<T*,I*>>>::value,
 		                                       int>::type tag = 0)
 	{
-		if (ptr->QueryInterface(__uuidof(I), (void**)(&mPtr)) != S_OK)
+		if (ptr->QueryInterface(GetIID<I>(), (void**)(&mPtr)) != S_OK)
 			mPtr = nullptr;
 		else
 			ptr->Release();
@@ -61,7 +68,7 @@ public:
 		                                                                       std::negation<std::is_convertible<T*, I*>>>::value,
 		                                                      int>::type tag = 0)
 	{
-		if (source.get()->QueryInterface(__uuidof(I), (void**)(&mPtr)) != S_OK)
+		if (source.get()->QueryInterface(GetIID<I>(), (void**)(&mPtr)) != S_OK)
 			mPtr = nullptr;
 	}
 

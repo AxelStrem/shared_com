@@ -1,6 +1,5 @@
 #pragma once
-#include <Unknwn.h>
-#include "iid_list.h"
+#include "shared_com.hpp"
 
 //
 // COMRefCounter template implements IUnknown methods
@@ -38,14 +37,17 @@ public:
 		if (!ppvObj)
 			return E_INVALIDARG;
 		*ppvObj = NULL;
-		
+		//
 		if(iid_checker<COMInterface, IUnknown, COMImplements...>::check(riid))
 		{
 			// Increment the reference count and return the pointer.
 			*ppvObj = (LPVOID)this;
 			AddRef();
+			LOG("QS\r\n");
 			return NOERROR;
 		}
+
+		LOG("QF\r\n");
 
 		return E_NOINTERFACE;
 	}
