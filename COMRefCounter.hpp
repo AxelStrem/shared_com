@@ -68,4 +68,6 @@ public:
 		}
 		return ulRefCount;
 	}
+
+	virtual ~COMRefCounter() {}
 };
